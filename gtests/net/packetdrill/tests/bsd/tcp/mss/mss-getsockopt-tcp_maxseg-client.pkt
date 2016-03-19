@@ -1,0 +1,12 @@
+// In this variant we test that a simple query of segment size works.
+// Create a socket.
++0.0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
++0.0 fcntl(3, F_GETFL) = 0x2 (flags O_RDWR)
++0.0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) = 0
++0.1 connect(3, ..., ...) = -1 EINPROGRESS (Operation now in progress)
+// Establish a connection.
+0.100 > S 0:0(0) win 65535 <mss 1460,nop,wscale 6,sackOK,TS val 100 ecr 0>
+0.200 < S. 0:0(0) ack 1 win 32792 <mss 1100, sackOK, eol, eol>
+0.200 > . 1:1(0) ack 1
+// Check for mss
+0.300 getsockopt(3, IPPROTO_TCP, TCP_MAXSEG, [1100], [4]) = 0
