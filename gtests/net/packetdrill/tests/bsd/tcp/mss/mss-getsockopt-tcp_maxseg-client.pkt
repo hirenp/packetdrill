@@ -1,11 +1,14 @@
 // In this variant we test that a simple query of segment size works.
+// This variation is without timestamps. FreeBSD has it enabled by default.
+// sysctl net.inet.tcp.rfc1323=0 before doing this test.
+// XXXHP: Find a way to do this ^ in the script and reset when exiting.
 // Create a socket.
 +0.0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
 +0.0 fcntl(3, F_GETFL) = 0x2 (flags O_RDWR)
 +0.0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) = 0
 +0.1 connect(3, ..., ...) = -1 EINPROGRESS (Operation now in progress)
 // Establish a connection.
-0.100 > S 0:0(0) win 65535 <mss 1460,nop,wscale 6,sackOK,TS val 100 ecr 0>
+0.100 > S 0:0(0) win 65535 <mss 1460, sackOK, eol, eol>
 0.200 < S. 0:0(0) ack 1 win 32792 <mss 1100, sackOK, eol, eol>
 0.200 > . 1:1(0) ack 1
 // Check for mss
