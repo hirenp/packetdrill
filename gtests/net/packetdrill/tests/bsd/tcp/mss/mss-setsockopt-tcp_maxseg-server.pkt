@@ -1,0 +1,49 @@
+// Test TCP_MAXSEG works on passive/server TCP connections.
+// FreeBSD doesn't allow changing MSS before connection is
+// established.
+
+// Set up a listening socket.
+0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+0.000 bind(3, ..., ...) = 0
+0.000 listen(3, 1) = 0
+
+// Establish a connection with an outgoing advertised MSS of 1300.
+0.100 < S 0:0(0) win 32792 <mss 1300,nop,wscale 7>
+0.100 > S. 0:0(0) ack 1 win 65535 <mss 1300,nop,wscale 6>
+0.200 < . 1:1(0) ack 1 win 257
+
+0.300 accept(3, ..., ...) = 4
+
+// Connection is established now set MSS to 1000
+0.350 setsockopt(4, IPPROTO_TCP, TCP_MAXSEG, [1000], 4) = 0
+
+// See if MSS is set to 1000
+0.400 getsockopt(4, IPPROTO_TCP, TCP_MAXSEG, [1000], [4]) = 0
+
+// Assert to make sure
+0.500 %{ assert tcpi_snd_mss == 1000 }%
+
+// Write 7 packets
+// Point is that the length is 1000 (i.e our MSS)
++0.000 write(4, ..., 7000) = 7000
++0.000 >  .    1:1001(1000) ack 1
++0.000 >  . 1001:2001(1000) ack 1
++0.000 >  . 2001:3001(1000) ack 1
++0.000 >  . 3001:4001(1000) ack 1
++0.000 >  . 4001:5001(1000) ack 1
++0.000 >  . 5001:6001(1000) ack 1
++0.000 > P. 6001:7001(1000) ack 1
+// Receive Acks
++0.000 <  . 1:1(0) ack 1001 win 65535
++0.000 <  . 1:1(0) ack 2001 win 65535
++0.000 <  . 1:1(0) ack 3001 win 65535
++0.000 <  . 1:1(0) ack 4001 win 65535
++0.000 <  . 1:1(0) ack 5001 win 65535
++0.000 <  . 1:1(0) ack 6001 win 65535
++0.000 <  . 1:1(0) ack 7001 win 65535
+// Teardown
++0.000 close(4) = 0
++0.000 > F. 7001:7001(0) ack 1
++0.100 < F. 1:1(0) ack 7002 win 65535
++0.000 >  . 7002:7002(0) ack 2
