@@ -495,7 +495,7 @@ void run_script(struct config *config, struct script *script)
 	DEBUGP("run_script: running script\n");
 
 	set_scheduling_priority();
-	lock_memory();
+	/*lock_memory();*/
 
 	/* This interpreter loop runs for local mode or wire client mode. */
 	assert(!config->is_wire_server);
