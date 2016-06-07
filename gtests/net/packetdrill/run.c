@@ -8,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See thest
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -64,6 +64,8 @@
  */
 const int MAX_SPIN_USECS = 20;
 
+static struct state *state = NULL;
+
 struct state *state_new(struct config *config,
 			struct script *script,
 			struct netdev *netdev)
@@ -103,15 +105,22 @@ static void close_all_sockets(struct state *state)
 			if (close(socket->live.fd))
 				die_perror("close");
 		}
-		if (socket->protocol == IPPROTO_TCP &&
-		    !state->config->is_wire_client &&
-		    reset_connection(state, socket)) {
-			die("error reseting connection\n");
-		}
-		if (socket->protocol == IPPROTO_SCTP &&
-		    !state->config->is_wire_client &&
-		    abort_association(state, socket)) {
-			die("error aborting association\n");
+		if ((socket->state != SOCKET_INIT) &&
+		    (socket->state != SOCKET_NEW) &&
+		    (socket->state != SOCKET_PASSIVE_LISTENING) &&
+		    (state->config->is_wire_client == false)) {
+			switch (socket->protocol) {
+			case IPPROTO_TCP:
+				if (reset_connection(state, socket) != STATUS_OK)
+					die("error reseting connection\n");
+				break;
+			case IPPROTO_SCTP:
+				if (abort_association(state, socket) != STATUS_OK)
+					die("error aborting association\n");
+				break;
+			default:
+				break;
+			}
 		}
 		struct socket *dead_socket = socket;
 		socket = socket->next;
@@ -232,7 +241,7 @@ static const char *event_description(struct event *event)
 
 	if ((event->type <= INVALID_EVENT) ||
 	    (event->type >= NUM_EVENT_TYPES)) {
-		die("bogus event type: %d", event->type);
+		die("bogus event type: %d\n", event->type);
 	}
 	switch (event->type) {
 	case PACKET_EVENT:
@@ -394,7 +403,8 @@ static void run_local_packet_event(struct state *state, struct event *event,
 		fprintf(stderr, "%s", error);
 		free(error);
 	} else if (result == STATUS_ERR) {
-		die("%s", error);
+		state_free(state);
+		die("%s\n", error);
 	}
 }
 
@@ -485,12 +495,22 @@ static s64 schedule_start_time_usecs(void)
 #endif
 }
 
+void signal_handler(int signal_number) {
+	if (state != NULL)
+		close_all_sockets(state);
+	
+	die("Handled signal %d\n", signal_number);
+}
+
 void run_script(struct config *config, struct script *script)
 {
 	char *error = NULL;
-	struct state *state = NULL;
 	struct netdev *netdev = NULL;
 	struct event *event = NULL;
+	
+	if (signal(SIGINT, signal_handler) == SIG_ERR) {
+		die("could not set up signal handler for SIGINT!");
+	}
 
 	DEBUGP("run_script: running script\n");
 
@@ -533,8 +553,10 @@ void run_script(struct config *config, struct script *script)
 		wire_client_send_client_starting(state->wire_client);
 
 	while (1) {
-		if (get_next_event(state, &error))
-			die("%s", error);
+		if (get_next_event(state, &error)) {
+			state_free(state);
+			die("%s\n", error);
+		}
 		event = state->event;
 		if (event == NULL)
 			break;
@@ -581,8 +603,11 @@ void run_script(struct config *config, struct script *script)
 		wire_client_next_event(state->wire_client, NULL);
 
 	if (code_execute(state->code, &error)) {
+		char *script_path = strdup(state->config->script_path);
+		state_free(state);
 		die("%s: error executing code: %s\n",
-		    state->config->script_path, error);
+		    script_path, error);
+		free(script_path);
 		free(error);
 	}
 
