@@ -52,6 +52,8 @@ struct sctp_common_header {
 #define SCTP_ECNE_CHUNK_TYPE				0x0c
 #define SCTP_CWR_CHUNK_TYPE				0x0d
 #define SCTP_SHUTDOWN_COMPLETE_CHUNK_TYPE		0x0e
+#define SCTP_I_DATA_CHUNK_TYPE				0x40
+#define SCTP_RECONFIG_CHUNK_TYPE			0x82
 #define SCTP_PAD_CHUNK_TYPE				0x84
 
 #define MAX_SCTP_CHUNK_BYTES	0xffff
@@ -205,11 +207,38 @@ struct sctp_shutdown_complete_chunk {
 	__be16 length;
 } __packed;
 
+#define SCTP_I_DATA_CHUNK_I_BIT				0x08
+#define SCTP_I_DATA_CHUNK_U_BIT				0x04
+#define SCTP_I_DATA_CHUNK_B_BIT				0x02
+#define SCTP_I_DATA_CHUNK_E_BIT				0x01
+
+struct sctp_i_data_chunk {
+	__u8 type;
+	__u8 flags;
+	__be16 length;
+	__be32 tsn;
+	__be16 sid;
+	__be16 res;
+	__be32 mid;
+	union {
+		__be32 ppid;
+		__be32 fsn;
+	} field;
+	__u8 data[];
+} __packed;
+
 struct sctp_pad_chunk {
 	__u8 type;
 	__u8 flags;
 	__be16 length;
 	__u8 padding_data[];
+} __packed;
+
+struct sctp_reconfig_chunk {
+	__u8 type;
+	__u8 flags;
+	__be16 length;
+	__u8 parameter[];
 } __packed;
 
 #define SCTP_HEARTBEAT_INFORMATION_PARAMETER_TYPE	0x0001
@@ -220,10 +249,19 @@ struct sctp_pad_chunk {
 #define SCTP_COOKIE_PRESERVATIVE_PARAMETER_TYPE		0x0009
 #define SCTP_HOSTNAME_ADDRESS_PARAMETER_TYPE		0x000b
 #define SCTP_SUPPORTED_ADDRESS_TYPES_PARAMETER_TYPE	0x000c
+#define SCTP_OUTGOING_SSN_RESET_REQUEST_PARAMETER_TYPE  0x000d
+#define SCTP_INCOMING_SSN_RESET_REQUEST_PARAMETER_TYPE  0x000e
+#define SCTP_SSN_TSN_RESET_REQUEST_PARAMETER_TYPE       0x000f
+#define SCTP_RECONFIG_RESPONSE_PARAMETER_TYPE           0x0010
+#define SCTP_ADD_OUTGOING_STREAMS_REQUEST_PARAMETER_TYPE 0x0011
+#define SCTP_ADD_INCOMING_STREAMS_REQUEST_PARAMETER_TYPE 0x0012
 #define SCTP_ECN_CAPABLE_PARAMETER_TYPE			0x8000
+#define SCTP_SUPPORTED_EXTENSIONS_PARAMETER_TYPE	0x8008
 #define SCTP_PAD_PARAMETER_TYPE				0x8005
+#define SCTP_Set_Primary_Address			0xc004
+#define SCTP_ADAPTATION_INDICATION_PARAMETER_TYPE	0xc006
 
-#define MAX_SCTP_PARAMETER_BYTES	0xffff
+#define MAX_SCTP_PARAMETER_BYTES			0xffff
 
 struct sctp_parameter {
 	__be16 type;
@@ -284,25 +322,93 @@ struct sctp_ecn_capable_parameter {
 	__be16 length;
 } __packed;
 
+struct sctp_supported_extensions_parameter {
+	__be16 type;
+	__be16 length;
+	__u8 chunk_type[];
+} __packed;
+
 struct sctp_pad_parameter {
 	__be16 type;
 	__be16 length;
 	__be16 padding_data[];
 } __packed;
 
+struct sctp_adaptation_indication_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 adaptation_code_point;
+} __packed;
+
+struct sctp_outgoing_ssn_reset_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+	__be32 respsn;
+	__be32 last_tsn;
+	__be16 sids[];
+} __packed;
+
+struct sctp_incoming_ssn_reset_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+	__be16 sids[];
+} __packed;
+
+struct sctp_ssn_tsn_reset_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+} __packed;
+
+struct sctp_reconfig_response_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 respsn;
+	__be32 result;
+	__be32 sender_next_tsn;
+	__be32 receiver_next_tsn;
+} __packed;
+
+struct sctp_add_outgoing_streams_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+	__be16 number_of_new_streams;
+	__be16 reserved;
+} __packed;
+
+struct sctp_add_incoming_streams_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+	__be16 number_of_new_streams;
+	__be16 reserved;
+} __packed;
+
+struct sctp_reconfig_generic_request_parameter {
+	__be16 type;
+	__be16 length;
+	__be32 reqsn;
+	__u8 value[];
+} __packed;
+
 #define SCTP_INVALID_STREAM_IDENTIFIER_CAUSE_CODE	0x0001
-#define SCTP_MISSING_MADATORY_PARAMETER_CAUSE_CODE	0x0002
+#define SCTP_MISSING_MANDATORY_PARAMETER_CAUSE_CODE	0x0002
 #define SCTP_STALE_COOKIE_ERROR_CAUSE_CODE		0x0003
 #define SCTP_OUT_OF_RESOURCES_CAUSE_CODE		0x0004
 #define SCTP_UNRESOLVABLE_ADDRESS_CAUSE_CODE		0x0005
 #define SCTP_UNRECOGNIZED_CHUNK_TYPE_CAUSE_CODE		0x0006
-#define SCTP_INVALID_MADATORY_PARAMETER_CAUSE_CODE	0x0007
+#define SCTP_INVALID_MANDATORY_PARAMETER_CAUSE_CODE	0x0007
 #define SCTP_UNRECOGNIZED_PARAMETERS_CAUSE_CODE		0x0008
 #define SCTP_NO_USER_DATA_CAUSE_CODE			0x0009
 #define SCTP_COOKIE_RECEIVED_WHILE_SHUTDOWN_CAUSE_CODE	0x000a
 #define SCTP_RESTART_WITH_NEW_ADDRESSES_CAUSE_CODE	0x000b
 #define SCTP_USER_INITIATED_ABORT_CAUSE_CODE		0x000c
 #define SCTP_PROTOCOL_VIOLATION_CAUSE_CODE		0x000d
+
+#define MAX_SCTP_CAUSE_BYTES	0xffff
 
 struct sctp_cause {
 	__be16 code;
