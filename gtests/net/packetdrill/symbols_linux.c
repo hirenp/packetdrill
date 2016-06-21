@@ -100,24 +100,159 @@ struct int_symbol platform_symbols_table[] = {
 	{ IPV6_MTU,                         "IPV6_MTU"                        },
 #endif
 
-#ifdef SCTP_RTOINFO
 	{ SCTP_RTOINFO,                     "SCTP_RTOINFO"                    },
-#endif
-#ifdef SCTP_INITMSG
+	{ SCTP_ASSOCINFO,                   "SCTP_ASSOCINFO"                  },
 	{ SCTP_INITMSG,                     "SCTP_INITMSG"                    },
-#endif
-#ifdef SCTP_NODELAY
 	{ SCTP_NODELAY,                     "SCTP_NODELAY"                    },
-#endif
-#ifdef SCTP_MAXSEG
+	{ SCTP_AUTOCLOSE,                   "SCTP_AUTOCLOSE"                  },
+	{ SCTP_PRIMARY_ADDR,                "SCTP_PRIMARY_ADDR"               },
+	{ SCTP_I_WANT_MAPPED_V4_ADDR,       "SCTP_I_WANT_MAPPED_V4_ADDR"      },
+	{ SCTP_DISABLE_FRAGMENTS,           "SCTP_DISABLE_FRAGMENTS"          },
+	{ SCTP_DEFAULT_SEND_PARAM,          "SCTP_DEFAULT_SEND_PARAM"         },
 	{ SCTP_MAXSEG,                      "SCTP_MAXSEG"                     },
-#endif
-#ifdef SCTP_DELAYED_SACK
+	{ SCTP_HMAC_IDENT,                  "SCTP_HMAC_IDENT"                 },
+	{ SCTP_AUTH_ACTIVE_KEY,             "SCTP_AUTH_ACTIVE_KEY"            },
 	{ SCTP_DELAYED_SACK,                "SCTP_DELAYED_SACK"               },
-#endif
-#ifdef SCTP_MAX_BURST
+	{ SCTP_PARTIAL_DELIVERY_POINT,      "SCTP_PARTIAL_DELIVERY_POINT"     },
 	{ SCTP_MAX_BURST,                   "SCTP_MAX_BURST"                  },
+	{ SCTP_CONTEXT,                     "SCTP_CONTEXT"                    },
+	{ SCTP_PEER_AUTH_CHUNKS,            "SCTP_PEER_AUTH_CHUNKS"           },
+	{ SCTP_LOCAL_AUTH_CHUNKS,           "SCTP_LOCAL_AUTH_CHUNKS"          },
+	{ SCTP_GET_ASSOC_NUMBER,            "SCTP_GET_ASSOC_NUMBER"           },
+	{ SCTP_SET_PEER_PRIMARY_ADDR,       "SCTP_SET_PEER_PRIMARY_ADDR"      },
+	{ SCTP_AUTH_CHUNK,                  "SCTP_AUTH_CHUNK"                 },
+	{ SCTP_AUTH_KEY,                    "SCTP_AUTH_KEY"                   },
+	{ SCTP_AUTH_DELETE_KEY,             "SCTP_AUTH_DELETE_KEY"            },
+#if 0
+	{ SCTP_DEFAULT_SNDINFO,             "SCTP_DEFAULT_SNDINFO"            },
 #endif
+#if 0
+	{ SCTP_EVENT,                       "SCTP_EVENT"                      },
+#endif
+#ifdef SCTP_EVENTS
+	{ SCTP_EVENTS,                      "SCTP_EVENTS"                     },
+#endif
+	{ SCTP_PEER_ADDR_PARAMS,            "SCTP_PEER_ADDR_PARAMS"           },
+	{ SCTP_STATUS,                      "SCTP_STATUS"                     },
+	{ SCTP_GET_PEER_ADDR_INFO,          "SCTP_GET_PEER_ADDR_INFO"         },
+	{ SCTP_FRAGMENT_INTERLEAVE,         "SCTP_FRAGMENT_INTERLEAVE"        },
+#if 0
+	{ SCTP_INTERLEAVING_SUPPORTED,      "SCTP_INTERLEAVING_SUPPORTED"     },
+#endif
+	{ SCTP_CLOSED,                      "SCTP_CLOSED"                     },
+#if 0
+	{ SCTP_BOUND,                       "SCTP_BOUND"                      },
+	{ SCTP_LISTEN,                      "SCTP_LISTEN"                     },
+#endif
+	{ SCTP_COOKIE_WAIT,                 "SCTP_COOKIE_WAIT"                },
+	{ SCTP_COOKIE_ECHOED,               "SCTP_COOKIE_ECHOED"              },
+	{ SCTP_ESTABLISHED,                 "SCTP_ESTABLISHED"                },
+	{ SCTP_SHUTDOWN_SENT,               "SCTP_SHUTDOWN_SENT"              },
+	{ SCTP_SHUTDOWN_RECEIVED,           "SCTP_SHUTDOWN_RECEIVED"          },
+	{ SCTP_SHUTDOWN_ACK_SENT,           "SCTP_SHUTDOWN_ACK_SENT"          },
+	{ SCTP_SHUTDOWN_PENDING,            "SCTP_SHUTDOWN_PENDING"           },
+	{ SCTP_UNCONFIRMED,                 "SCTP_UNCONFIRMED"                },
+	{ SCTP_ACTIVE,                      "SCTP_ACTIVE"                     },
+	{ SCTP_INACTIVE,                    "SCTP_INACTIVE"                   },
+	{ SPP_HB_ENABLE,                    "SPP_HB_ENABLE"                   },
+	{ SPP_HB_DISABLE,                   "SPP_HB_DISABLE"                  },
+	{ SPP_HB_DEMAND,                    "SPP_HB_DEMAND"                   },
+	{ SPP_HB_TIME_IS_ZERO,              "SPP_HB_TIME_IS_ZERO"             },
+	{ SPP_PMTUD_ENABLE,                 "SPP_PMTUD_ENABLE"                },
+	{ SPP_PMTUD_DISABLE,                "SPP_PMTUD_DISABLE"               },
+	{ SPP_SACKDELAY_ENABLE,             "SPP_SACKDELAY_ENABLE"            },
+	{ SPP_SACKDELAY_DISABLE,            "SPP_SACKDELAY_DISABLE"           },
+#ifdef SCTP_ASSOC_CHANGE
+	{ SCTP_ASSOC_CHANGE,                "SCTP_ASSOC_CHANGE"               },
+#endif
+#ifdef SCTP_PEER_ADDR_CHANGE
+	{ SCTP_PEER_ADDR_CHANGE,            "SCTP_PEER_ADDR_CHANGE"           },
+#endif
+#ifdef SCTP_REMOTE_ERROR
+	{ SCTP_REMOTE_ERROR,                "SCTP_REMOTE_ERROR"               },
+#endif
+#ifdef SCTP_SEND_FAILED
+	{ SCTP_SEND_FAILED,                 "SCTP_SEND_FAILED"                },
+#endif
+#ifdef SCTP_SHUTDOWN_EVENT
+	{ SCTP_SHUTDOWN_EVENT,              "SCTP_SHUTDOWN_EVENT"             },
+#endif
+#ifdef SCTP_ADAPTATION_INDICATION
+	{ SCTP_ADAPTATION_INDICATION,       "SCTP_ADAPTATION_INDICATION"      },
+#endif
+#ifdef SCTP_ADAPTION_INDICATION
+        { SCTP_ADAPTION_INDICATION,         "SCTP_ADAPTION_INDICATION"        },
+#endif
+#ifdef SCTP_PARTIAL_DELIVERY_EVENT
+	{ SCTP_PARTIAL_DELIVERY_EVENT,      "SCTP_PARTIAL_DELIVERY_EVENT"     },
+#endif
+#ifdef SCTP_AUTHENTICATION_EVENT
+	{ SCTP_AUTHENTICATION_EVENT,        "SCTP_AUTHENTICATION_EVENT"       },
+#endif
+#ifdef SCTP_SENDER_DRY_EVENT
+        { SCTP_SENDER_DRY_EVENT,            "SCTP_SENDER_DRY_EVENT"           },
+#endif
+#ifdef SCTP_NOTIFICATIONS_STOPPED_EVENT
+        { SCTP_NOTIFICATIONS_STOPPED_EVENT, "SCTP_NOTIFICATIONS_STOPPED_EVENT"},
+#endif
+
+#ifdef SCTP_ADAPTATION_LAYER
+	{ SCTP_ADAPTATION_LAYER,            "SCTP_ADAPTATION_LAYER"           },
+#endif
+
+#if 0
+	{ SPP_IPV6_FLOWLABEL,               "SPP_IPV6_FLOWLABEL"              },
+	{ SPP_DSCP,                         "SPP_DSCP"                        },
+#endif
+        { SCTP_UNORDERED,                   "SCTP_UNORDERED"                  },
+        { SCTP_ADDR_OVER,                   "SCTP_ADDR_OVER"                  },
+        { SCTP_ABORT,                       "SCTP_ABORT"                      },
+        { SCTP_EOF,                         "SCTP_EOF"                        },
+	{ SCTP_SACK_IMMEDIATELY,	    "SCTP_SACK_IMMEDIATELY"	      },
+#if 0
+        { SCTP_SENDALL,                     "SCTP_SENDALL"                    },
+#endif
+        { SCTP_UNORDERED,                   "SCTP_UNORDERED"                  },
+        { SCTP_ADDR_OVER,                   "SCTP_ADDR_OVER"                  },
+        { SCTP_ABORT,                       "SCTP_ABORT"                      },
+        { SCTP_EOF,                         "SCTP_EOF"                        },
+#if 0
+        { SCTP_SENDALL,                     "SCTP_SENDALL"                    },
+        { SCTP_EOR,                         "SCTP_EOR"                        },
+#endif
+//sctp auth hmac ident
+	{ SCTP_AUTH_HMAC_ID_SHA1,           "SCTP_AUTH_HMAC_ID_SHA1"          },
+	{ SCTP_AUTH_HMAC_ID_SHA1,           "SCTP_AUTH_HMAC_ID_SHA256"        },
+//cmsgs type for sctp
+	{ SCTP_INIT,                        "SCTP_INIT"                       },
+	{ SCTP_SNDRCV,                      "SCTP_SNDRCV"                     },
+//flags for sctp_assoc_change
+	{ SCTP_COMM_UP,                     "SCTP_COMM_UP"                    },
+	{ SCTP_COMM_LOST,                   "SCTP_COMM_LOST"                  },
+	{ SCTP_RESTART,                     "SCTP_RESTART"                    },
+	{ SCTP_SHUTDOWN_COMP,               "SCTP_SHUTDOWN_COMP"              },
+	{ SCTP_CANT_STR_ASSOC,              "SCTP_CANT_STR_ASSOC"             },
+#if 0
+	{ SCTP_ASSOC_SUPPORTS_PR,           "SCTP_ASSOC_SUPPORTS_PR"          },
+	{ SCTP_ASSOC_SUPPORTS_AUTH,         "SCTP_ASSOC_SUPPORTS_AUTH"        },
+	{ SCTP_ASSOC_SUPPORTS_ASCONF,       "SCTP_ASSOC_SUPPORTS_ASCONF"      },
+	{ SCTP_ASSOC_SUPPORTS_MULTIBUF,     "SCTP_ASSOC_SUPPORTS_MULTIBUF"    },
+#endif
+//flags for sctp_send_failed
+	{ SCTP_DATA_UNSENT,                 "SCTP_DATA_UNSENT"                },
+	{ SCTP_DATA_SENT,                   "SCTP_DATA_SENT"                  },
+//flags for sctp_peer_addr_change
+	{ SCTP_ADDR_AVAILABLE,              "SCTP_ADDR_AVAILABLE"             },
+	{ SCTP_ADDR_UNREACHABLE,            "SCTP_ADDR_UNREACHABLE"           },
+	{ SCTP_ADDR_REMOVED,                "SCTP_ADDR_REMOVED"               },
+	{ SCTP_ADDR_ADDED,                  "SCTP_ADDR_ADDED"                 },
+	{ SCTP_ADDR_MADE_PRIM,              "SCTP_ADDR_MADE_PRIM"             },
+//flags for sctp_partial_delivery_event
+	{ SCTP_PARTIAL_DELIVERY_ABORTED,    "SCTP_PARTIAL_DELIVERY_ABORTED"   },
+
+	{ SCTP_BINDX_ADD_ADDR,              "SCTP_BINDX_ADD_ADDR"             },
+	{ SCTP_BINDX_REM_ADDR,              "SCTP_BINDX_REM_ADDR"             },
+        { SCTP_SACK_IMMEDIATELY,            "SCTP_SACK_IMMEDIATELY"           },
 
 	{ TCP_NODELAY,                      "TCP_NODELAY"                     },
 	{ TCP_MAXSEG,                       "TCP_MAXSEG"                      },
@@ -212,6 +347,7 @@ struct int_symbol platform_symbols_table[] = {
 	{ MSG_MORE,                         "MSG_MORE"                        },
 	{ MSG_CMSG_CLOEXEC,                 "MSG_CMSG_CLOEXEC"                },
 	{ MSG_FASTOPEN,                     "MSG_FASTOPEN"                    },
+	{ MSG_NOTIFICATION,                 "MSG_NOTIFICATION"                },
 
 #ifdef SIOCINQ
 	{ SIOCINQ,                          "SIOCINQ"                         },

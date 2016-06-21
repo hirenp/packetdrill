@@ -19,12 +19,13 @@
 /*
  * Author: ncardwell@google.com (Neal Cardwell)
  *
- * Helpers to calculate IP, TCP, and UDP checksums.
+ * Helpers to calculate IP, SCTP, TCP, UDP and UDPLite checksums.
  */
 
 #include "checksum.h"
 
 #include <assert.h>
+#include <stdint.h>
 
 /* Add bytes in buffer to a running checksum. Returns the new
  * intermediate checksum. Use ip_checksum_fold() to convert the

@@ -190,7 +190,11 @@ static void set_ipv6_defaults(struct config *config)
 void set_default_config(struct config *config)
 {
 	memset(config, 0, sizeof(*config));
+#if defined(__FreeBSD__)
+	config->code_command_line	= "/usr/local/bin/python";
+#else
 	config->code_command_line	= "/usr/bin/python";
+#endif
 	config->code_format		= "python";
 	config->code_sockopt		= "";		/* auto-detect */
 	config->ip_version		= IP_VERSION_4;
@@ -255,7 +259,7 @@ static void finalize_ipv4_config(struct config *config)
 	config->live_prefix_len =
 		netmask_to_prefix(config->live_netmask_ip_string);
 	config->live_gateway_ip = ipv4_parse(config->live_gateway_ip_string);
-	config->live_bind_ip	= ipv4_parse("0.0.0.0");
+	config->live_bind_ip	= config->live_local_ip;
 	config->live_connect_ip	= config->live_remote_ip;
 	config->socket_domain	= AF_INET;
 	config->wire_protocol	= AF_INET;
@@ -275,7 +279,7 @@ static void finalize_ipv4_mapped_ipv6_config(struct config *config)
 	config->live_prefix_len =
 		netmask_to_prefix(config->live_netmask_ip_string);
 	config->live_gateway_ip = ipv4_parse(config->live_gateway_ip_string);
-	config->live_bind_ip	= ipv6_parse("::");
+	config->live_bind_ip	= ipv6_map_from_ipv4(config->live_local_ip);
 	config->live_connect_ip	= ipv6_map_from_ipv4(config->live_remote_ip);
 	config->socket_domain	= AF_INET6;
 	config->wire_protocol	= AF_INET;
@@ -294,7 +298,7 @@ static void finalize_ipv6_config(struct config *config)
 
 	config->live_prefix_len	= DEFAULT_V6_LIVE_PREFIX_LEN;
 	config->live_gateway_ip = ipv6_parse(config->live_gateway_ip_string);
-	config->live_bind_ip	= ipv6_parse("::");
+	config->live_bind_ip	= config->live_local_ip;
 	config->live_connect_ip	= config->live_remote_ip;
 	config->socket_domain	= AF_INET6;
 	config->wire_protocol	= AF_INET6;

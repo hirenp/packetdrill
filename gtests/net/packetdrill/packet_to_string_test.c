@@ -102,7 +102,7 @@ static void test_sctp_ipv6_packet_to_string(void)
 	/* An IPv6/SCTP packet. */
 	u8 data[] = {
 		/* IPv6 Base Header: */
-		0x60, 0x00, 0x00, 0x00, 0x01, 0xa0, 0x84, 0xff,
+		0x60, 0x00, 0x00, 0x00, 0x01, 0xd8, 0x84, 0xff,
 		0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x22, 0x22,
 		0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -110,7 +110,7 @@ static void test_sctp_ipv6_packet_to_string(void)
 		/* SCTP Common Header: */
 		0x04, 0xd2, 0x1f, 0x90,
 		0x01, 0x02, 0x03, 0x04,
-		0x6e, 0xfc, 0x47, 0x17,
+		0x24, 0x25, 0x51, 0x31,
 		/* SCTP DATA Chunk */
 		0x00, 0x0f, 0x00, 0x13,
 		0x01, 0x02, 0x03, 0x04,
@@ -118,7 +118,7 @@ static void test_sctp_ipv6_packet_to_string(void)
 		0x00, 0x00, 0x00, 0x00,
 		0x00, 0x01, 0x02, 0x00,
 		/* SCTP INIT Chunk */
-		0x01, 0x00, 0x00, 0x60,
+		0x01, 0x00, 0x00, 0x68,
 		0x00, 0x00, 0x00, 0x01,
 		0x00, 0x01, 0x00, 0x00,
 		0x00, 0x0f, 0x00, 0x0f,
@@ -138,6 +138,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		0x00, 0x05, 0x00, 0x06,
 		0x00, 0x0b, 0x00, 0x00,
 		0x80, 0x00, 0x00, 0x04,
+		0x80, 0x08, 0x00, 0x05,
+		0x40, 0x00, 0x00, 0x00,
 		0x80, 0x05, 0x00, 0x10,
 		0x50, 0x50, 0x50, 0x50,
 		0x50, 0x50, 0x50, 0x50,
@@ -224,6 +226,20 @@ static void test_sctp_ipv6_packet_to_string(void)
 		0x01, 0x02, 0x03, 0x04,
 		/* SCTP SHUTDOWN_COMPLETE Chunk */
 		0x0e, 0x01, 0x00, 0x04,
+		/* SCTP I-DATA Chunk */
+		0x40, 0x0f, 0x00, 0x17,
+		0x00, 0x00, 0x00, 0x04,
+		0x00, 0xff, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x01,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x01, 0x02, 0x00,
+		/* SCTP I-DATA Chunk */
+		0x40, 0x0d, 0x00, 0x17,
+		0x00, 0x00, 0x00, 0x04,
+		0x00, 0xff, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x02,
+		0x00, 0x00, 0x00, 0x01,
+		0x00, 0x01, 0x02, 0x00,
 		/* SCTP PAD Chunk */
 		0x84, 0x00, 0x00, 0x10,
 		0x50, 0x50, 0x50, 0x50,
@@ -256,9 +272,10 @@ static void test_sctp_ipv6_packet_to_string(void)
 		     "IPV4_ADDRESS[addr=1.2.3.4], "
 		     "IPV6_ADDRESS[addr=::1], "
 		     "COOKIE_PRESERVATIVE[incr=65536], "
-		     "HOSTNAME[addr=\"@A\"], "
+		     "HOSTNAME_ADDRESS[addr=\"@A\"], "
 		     "SUPPORTED_ADDRESS_TYPES[types=[IPv4, IPv6, HOSTNAME]], "
 		     "ECN_CAPABLE[], "
+		     "SUPPORTED_EXTENSIONS[types=[I-DATA]], "
 		     "PAD[len=16, val=...]]; "
 		"INIT_ACK[flgs=0x00, tag=1, a_rwnd=65536, os=15, is=15, tsn=16909060, "
 			 "STATE_COOKIE[len=7, val=...], "
@@ -270,11 +287,11 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"HEARTBEAT_ACK[flgs=0x00, HEARTBEAT_INFORMATION[len=6, val=...]]; "
 		"ABORT[flgs=T]; "
 		"ABORT[flgs=0x00, INVALID_STREAM_IDENTIFIER[sid=255], "
-		      "MISSING_MANDATORY_PARAMETER[STATE_COOKIE], "
+		      "MISSING_MANDATORY_PARAMETER[types=[STATE_COOKIE]], "
 		      "STALE_COOKIE_ERROR[staleness=65536], "
 		      "OUT_OF_RESOURCES[], "
-		      "UNRESOLVABLE_ADDRESS[HOSTNAME[addr=\"@A\"]], "
-		      "UNRECOGNIZED_CHUNK["
+		      "UNRESOLVABLE_ADDRESS[param=HOSTNAME_ADDRESS[addr=\"@A\"]], "
+		      "UNRECOGNIZED_CHUNK_TYPE[chk="
 			"CHUNK[type=0xfe, flgs=0x05, value=[0x01]]], "
 		      "INVALID_MANDATORY_PARAMETER[], "
 		      "UNRECOGNIZED_PARAMETERS["
@@ -284,8 +301,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		      "COOKIE_RECEIVED_WHILE_SHUTDOWN[], "
 		      "RESTART_WITH_NEW_ADDRESSES[IPV4_ADDRESS[addr=1.2.3.4], "
 						 "IPV4_ADDRESS[addr=2.3.4.5]], "
-		      "USER_INITIATED_ABORT[BYE], "
-		      "PROTOCOL_VIOLATION[@@]]; "
+		      "USER_INITIATED_ABORT[info=\"BYE\"], "
+		      "PROTOCOL_VIOLATION[info=\"@@\"]]; "
 		"SHUTDOWN[flgs=0x00, cum_tsn=16909060]; "
 		"SHUTDOWN_ACK[flgs=0x00]; "
 		"ERROR[flgs=0x00]; "
@@ -294,6 +311,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"ECNE[flgs=0x00, tsn=16909060]; "
 		"CWR[flgs=0x00, tsn=16909060]; "
 		"SHUTDOWN_COMPLETE[flgs=T]; "
+		"I-DATA[flgs=IUBE, len=23, tsn=4, sid=255, mid=1, ppid=0]; "
+		"I-DATA[flgs=IUE, len=23, tsn=4, sid=255, mid=2, fsn=1]; "
 		"PAD[flgs=0x00, len=16, val=...]";
 	assert(strcmp(dump, expected) == 0);
 	free(dump);
@@ -311,9 +330,10 @@ static void test_sctp_ipv6_packet_to_string(void)
 		     "IPV4_ADDRESS[addr=1.2.3.4], "
 		     "IPV6_ADDRESS[addr=::1], "
 		     "COOKIE_PRESERVATIVE[incr=65536], "
-		     "HOSTNAME[addr=\"@A\"], "
+		     "HOSTNAME_ADDRESS[addr=\"@A\"], "
 		     "SUPPORTED_ADDRESS_TYPES[types=[IPv4, IPv6, HOSTNAME]], "
 		     "ECN_CAPABLE[], "
+		     "SUPPORTED_EXTENSIONS[types=[I-DATA]], "
 		     "PAD[len=16, val=...]]; "
 		"INIT_ACK[flgs=0x00, tag=1, a_rwnd=65536, os=15, is=15, tsn=16909060, "
 			 "STATE_COOKIE[len=7, val=...], "
@@ -325,11 +345,11 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"HEARTBEAT_ACK[flgs=0x00, HEARTBEAT_INFORMATION[len=6, val=...]]; "
 		"ABORT[flgs=T]; "
 		"ABORT[flgs=0x00, INVALID_STREAM_IDENTIFIER[sid=255], "
-		      "MISSING_MANDATORY_PARAMETER[STATE_COOKIE], "
+		      "MISSING_MANDATORY_PARAMETER[types=[STATE_COOKIE]], "
 		      "STALE_COOKIE_ERROR[staleness=65536], "
 		      "OUT_OF_RESOURCES[], "
-		      "UNRESOLVABLE_ADDRESS[HOSTNAME[addr=\"@A\"]], "
-		      "UNRECOGNIZED_CHUNK["
+		      "UNRESOLVABLE_ADDRESS[param=HOSTNAME_ADDRESS[addr=\"@A\"]], "
+		      "UNRECOGNIZED_CHUNK_TYPE[chk="
 			"CHUNK[type=0xfe, flgs=0x05, value=[0x01]]], "
 		      "INVALID_MANDATORY_PARAMETER[], "
 		      "UNRECOGNIZED_PARAMETERS["
@@ -339,8 +359,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		      "COOKIE_RECEIVED_WHILE_SHUTDOWN[], "
 		      "RESTART_WITH_NEW_ADDRESSES[IPV4_ADDRESS[addr=1.2.3.4], "
 						 "IPV4_ADDRESS[addr=2.3.4.5]], "
-		      "USER_INITIATED_ABORT[BYE], "
-		      "PROTOCOL_VIOLATION[@@]]; "
+		      "USER_INITIATED_ABORT[info=\"BYE\"], "
+		      "PROTOCOL_VIOLATION[info=\"@@\"]]; "
 		"SHUTDOWN[flgs=0x00, cum_tsn=16909060]; "
 		"SHUTDOWN_ACK[flgs=0x00]; "
 		"ERROR[flgs=0x00]; "
@@ -349,6 +369,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"ECNE[flgs=0x00, tsn=16909060]; "
 		"CWR[flgs=0x00, tsn=16909060]; "
 		"SHUTDOWN_COMPLETE[flgs=T]; "
+		"I-DATA[flgs=IUBE, len=23, tsn=4, sid=255, mid=1, ppid=0]; "
+		"I-DATA[flgs=IUE, len=23, tsn=4, sid=255, mid=2, fsn=1]; "
 		"PAD[flgs=0x00, len=16, val=...]";
 	assert(strcmp(dump, expected) == 0);
 	free(dump);
@@ -366,9 +388,10 @@ static void test_sctp_ipv6_packet_to_string(void)
 		     "IPV4_ADDRESS[addr=1.2.3.4], "
 		     "IPV6_ADDRESS[addr=::1], "
 		     "COOKIE_PRESERVATIVE[incr=65536], "
-		     "HOSTNAME[addr=\"@A\"], "
+		     "HOSTNAME_ADDRESS[addr=\"@A\"], "
 		     "SUPPORTED_ADDRESS_TYPES[types=[IPv4, IPv6, HOSTNAME]], "
 		     "ECN_CAPABLE[], "
+		     "SUPPORTED_EXTENSIONS[types=[I-DATA]], "
 		     "PAD[len=16, val=...]]; "
 		"INIT_ACK[flgs=0x00, tag=1, a_rwnd=65536, os=15, is=15, tsn=16909060, "
 			 "STATE_COOKIE[len=7, val=...], "
@@ -380,11 +403,11 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"HEARTBEAT_ACK[flgs=0x00, HEARTBEAT_INFORMATION[len=6, val=...]]; "
 		"ABORT[flgs=T]; "
 		"ABORT[flgs=0x00, INVALID_STREAM_IDENTIFIER[sid=255], "
-		      "MISSING_MANDATORY_PARAMETER[STATE_COOKIE], "
+		      "MISSING_MANDATORY_PARAMETER[types=[STATE_COOKIE]], "
 		      "STALE_COOKIE_ERROR[staleness=65536], "
 		      "OUT_OF_RESOURCES[], "
-		      "UNRESOLVABLE_ADDRESS[HOSTNAME[addr=\"@A\"]], "
-		      "UNRECOGNIZED_CHUNK["
+		      "UNRESOLVABLE_ADDRESS[param=HOSTNAME_ADDRESS[addr=\"@A\"]], "
+		      "UNRECOGNIZED_CHUNK_TYPE[chk="
 			"CHUNK[type=0xfe, flgs=0x05, value=[0x01]]], "
 		      "INVALID_MANDATORY_PARAMETER[], "
 		      "UNRECOGNIZED_PARAMETERS["
@@ -394,8 +417,8 @@ static void test_sctp_ipv6_packet_to_string(void)
 		      "COOKIE_RECEIVED_WHILE_SHUTDOWN[], "
 		      "RESTART_WITH_NEW_ADDRESSES[IPV4_ADDRESS[addr=1.2.3.4], "
 						 "IPV4_ADDRESS[addr=2.3.4.5]], "
-		      "USER_INITIATED_ABORT[BYE], "
-		      "PROTOCOL_VIOLATION[@@]]; "
+		      "USER_INITIATED_ABORT[info=\"BYE\"], "
+		      "PROTOCOL_VIOLATION[info=\"@@\"]]; "
 		"SHUTDOWN[flgs=0x00, cum_tsn=16909060]; "
 		"SHUTDOWN_ACK[flgs=0x00]; "
 		"ERROR[flgs=0x00]; "
@@ -404,37 +427,42 @@ static void test_sctp_ipv6_packet_to_string(void)
 		"ECNE[flgs=0x00, tsn=16909060]; "
 		"CWR[flgs=0x00, tsn=16909060]; "
 		"SHUTDOWN_COMPLETE[flgs=T]; "
+		"I-DATA[flgs=IUBE, len=23, tsn=4, sid=255, mid=1, ppid=0]; "
+		"I-DATA[flgs=IUE, len=23, tsn=4, sid=255, mid=2, fsn=1]; "
 		"PAD[flgs=0x00, len=16, val=...]"
 		"\n"
-		"0x0000: 60 00 00 00 01 a0 84 ff 00 02 00 00 00 00 00 00 " "\n"
+		"0x0000: 60 00 00 00 01 d8 84 ff 00 02 00 00 00 00 00 00 " "\n"
 		"0x0010: 00 00 00 00 00 00 22 22 00 01 00 00 00 00 00 00 " "\n"
 		"0x0020: 00 00 00 00 00 00 11 11 04 d2 1f 90 01 02 03 04 " "\n"
-		"0x0030: 6e fc 47 17 00 0f 00 13 01 02 03 04 00 ff 01 00 " "\n"
-		"0x0040: 00 00 00 00 00 01 02 00 01 00 00 60 00 00 00 01 " "\n"
+		"0x0030: 24 25 51 31 00 0f 00 13 01 02 03 04 00 ff 01 00 " "\n"
+		"0x0040: 00 00 00 00 00 01 02 00 01 00 00 68 00 00 00 01 " "\n"
 		"0x0050: 00 01 00 00 00 0f 00 0f 01 02 03 04 00 05 00 08 " "\n"
 		"0x0060: 01 02 03 04 00 06 00 14 00 00 00 00 00 00 00 00 " "\n"
 		"0x0070: 00 00 00 00 00 00 00 01 00 09 00 08 00 01 00 00 " "\n"
 		"0x0080: 00 0b 00 06 40 41 00 00 00 0c 00 0a 00 05 00 06 " "\n"
-		"0x0090: 00 0b 00 00 80 00 00 04 80 05 00 10 50 50 50 50 " "\n"
-		"0x00a0: 50 50 50 50 50 50 50 50 02 00 00 24 00 00 00 01 " "\n"
-		"0x00b0: 00 01 00 00 00 0f 00 0f 01 02 03 04 00 07 00 07 " "\n"
-		"0x00c0: 01 02 03 00 00 08 00 08 80 01 00 04 03 00 00 20 " "\n"
-		"0x00d0: 01 02 03 04 00 01 00 00 00 03 00 01 00 01 00 03 " "\n"
-		"0x00e0: 00 05 00 0f 10 00 10 14 01 02 03 04 04 00 00 0a " "\n"
-		"0x00f0: 00 01 00 06 01 02 00 00 05 00 00 0a 00 01 00 06 " "\n"
-		"0x0100: 01 02 00 00 06 01 00 04 06 00 00 80 00 01 00 08 " "\n"
-		"0x0110: 00 ff 00 00 00 02 00 0a 00 00 00 01 00 07 00 00 " "\n"
-		"0x0120: 00 03 00 08 00 01 00 00 00 04 00 04 00 05 00 0c " "\n"
-		"0x0130: 00 0b 00 06 40 41 00 00 00 06 00 0c fe 05 00 05 " "\n"
-		"0x0140: 01 00 00 00 00 07 00 04 00 08 00 10 80 0a 00 04 " "\n"
-		"0x0150: 80 0b 00 05 01 00 00 00 00 09 00 08 01 02 03 04 " "\n"
-		"0x0160: 00 0a 00 04 00 0b 00 14 00 05 00 08 01 02 03 04 " "\n"
-		"0x0170: 00 05 00 08 02 03 04 05 00 0c 00 07 42 59 45 00 " "\n"
-		"0x0180: 00 0d 00 06 40 40 00 00 07 00 00 08 01 02 03 04 " "\n"
-		"0x0190: 08 00 00 04 09 00 00 04 0a 00 00 05 45 00 00 00 " "\n"
-		"0x01a0: 0b 00 00 04 0c 00 00 08 01 02 03 04 0d 00 00 08 " "\n"
-		"0x01b0: 01 02 03 04 0e 01 00 04 84 00 00 10 50 50 50 50 " "\n"
-		"0x01c0: 50 50 50 50 50 50 50 50 " "\n";
+		"0x0090: 00 0b 00 00 80 00 00 04 80 08 00 05 40 00 00 00 " "\n"
+		"0x00a0: 80 05 00 10 50 50 50 50 50 50 50 50 50 50 50 50 " "\n"
+		"0x00b0: 02 00 00 24 00 00 00 01 00 01 00 00 00 0f 00 0f " "\n"
+		"0x00c0: 01 02 03 04 00 07 00 07 01 02 03 00 00 08 00 08 " "\n"
+		"0x00d0: 80 01 00 04 03 00 00 20 01 02 03 04 00 01 00 00 " "\n"
+		"0x00e0: 00 03 00 01 00 01 00 03 00 05 00 0f 10 00 10 14 " "\n"
+		"0x00f0: 01 02 03 04 04 00 00 0a 00 01 00 06 01 02 00 00 " "\n"
+		"0x0100: 05 00 00 0a 00 01 00 06 01 02 00 00 06 01 00 04 " "\n"
+		"0x0110: 06 00 00 80 00 01 00 08 00 ff 00 00 00 02 00 0a " "\n"
+		"0x0120: 00 00 00 01 00 07 00 00 00 03 00 08 00 01 00 00 " "\n"
+		"0x0130: 00 04 00 04 00 05 00 0c 00 0b 00 06 40 41 00 00 " "\n"
+		"0x0140: 00 06 00 0c fe 05 00 05 01 00 00 00 00 07 00 04 " "\n"
+		"0x0150: 00 08 00 10 80 0a 00 04 80 0b 00 05 01 00 00 00 " "\n"
+		"0x0160: 00 09 00 08 01 02 03 04 00 0a 00 04 00 0b 00 14 " "\n"
+		"0x0170: 00 05 00 08 01 02 03 04 00 05 00 08 02 03 04 05 " "\n"
+		"0x0180: 00 0c 00 07 42 59 45 00 00 0d 00 06 40 40 00 00 " "\n"
+		"0x0190: 07 00 00 08 01 02 03 04 08 00 00 04 09 00 00 04 " "\n"
+		"0x01a0: 0a 00 00 05 45 00 00 00 0b 00 00 04 0c 00 00 08 " "\n"
+		"0x01b0: 01 02 03 04 0d 00 00 08 01 02 03 04 0e 01 00 04 " "\n"
+		"0x01c0: 40 0f 00 17 00 00 00 04 00 ff 00 00 00 00 00 01 " "\n"
+		"0x01d0: 00 00 00 00 00 01 02 00 40 0d 00 17 00 00 00 04 " "\n"
+		"0x01e0: 00 ff 00 00 00 00 00 02 00 00 00 01 00 01 02 00 " "\n"
+		"0x01f0: 84 00 00 10 50 50 50 50 50 50 50 50 50 50 50 50 " "\n";
 	printf("expected = '%s'\n", expected);
 	assert(strcmp(dump, expected) == 0);
 	free(dump);
